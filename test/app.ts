@@ -7,7 +7,7 @@ class LinkNode<T> {
 
 type CommonType<T> = LinkNode<T> | null;
 
-class CircularLinkedList<T> {
+class LinkedList<T> {
   public head: CommonType<T>;
   constructor() {
     this.head = null;
@@ -15,96 +15,107 @@ class CircularLinkedList<T> {
 
   push(data: T): void {
     const newNode = new LinkNode<T>(data);
-    let temp = this.head;
-
     newNode.next = this.head;
-
-    if (temp !== null) {
-      while (temp!.next !== this.head) temp = temp!.next;
-      temp!.next = newNode;
-    } else {
-      newNode.next = newNode;
-    }
-
     this.head = newNode;
   }
 
+  insertAt(prevNode: CommonType<T>, data: T): void {
+    if (prevNode === null) {
+      console.log("Previous node seems to be null");
+    }
+
+    const newNode = new LinkNode<T>(data);
+    newNode.next = prevNode.next;
+    prevNode.next = newNode;
+  }
+
+  append(data: T): void {
+    const newNode = new LinkNode<T>(data);
+
+    if (this.head === null) {
+      this.head = newNode;
+      return;
+    }
+
+    let last = this.head;
+
+    while (last.next) last = last.next;
+
+    last.next = newNode;
+  }
+
   deleteKey(key: T): void {
-    let currNode = this.head;
-    let prevNode: CommonType<T> = null;
+    let temp = this.head;
+    let prev: CommonType<T> = null;
 
-    while (currNode) {
-      if (currNode.data === key && currNode === this.head) {
-        // case 1
-        // head is the only element
-        if (currNode.next === this.head) {
-          currNode = null;
-          this.head = null;
-          return;
-        }
-
-        // case 2
-        // more element in list
-        else {
-          while (currNode!.next !== this.head) currNode = currNode!.next;
-          currNode!.next = this.head.next;
-          this.head = this.head.next;
-          return;
-        }
-      } else if (currNode.data === key) {
-        prevNode!.next = currNode!.next;
-        currNode = null;
+    // case 1
+    if (temp !== null) {
+      if (temp.data === key) {
+        this.head = temp.next;
+        temp = null;
         return;
-      } else {
-        if (currNode.next === this.head) break;
       }
-
-      prevNode = currNode;
-      currNode = currNode.next;
     }
+
+    // case 2
+    while (temp !== null) {
+      if (temp.data === key) break;
+      prev = temp;
+      temp = temp.next;
+    }
+
+    // case 3
+    if (prev === null || temp === null) return;
+
+    prev.next = temp.next;
+    temp = null;
+    return;
   }
 
-  getNodeCount(): void {
+  deleteTotalList(): void {
     let curr = this.head;
-    let count = 1;
 
-    while (curr!.next !== this.head) {
-      count += 1;
-      curr = curr!.next;
+    while (curr !== null) {
+      const next = curr.next;
+      this.head = next;
+      delete curr.data;
+      curr = next;
     }
-
-    console.log(`Total ${count} nodes.`);
   }
 
-  toCircularList(head: CommonType<T>): void {
-    let start = head;
+  reverse(): void {
+    let curr = this.head;
+    let prev: CommonType<T> = null;
 
-    while(head!.next !== null) head = head!.next;
+    while (curr) {
+      const next = curr.next;
+      curr.next = prev;
+      prev = curr;
+      curr = next;
+    }
 
-    head.next = start;
+    this.head = prev;
   }
 
   printList(): void {
     let temp = this.head;
 
-    if (temp !== null) {
-      do {
-        console.log(temp!.data);
-        temp = temp!.next;
-      } while (temp !== this.head);
+    while (temp) {
+      console.log(temp.data);
+      temp = temp.next;
     }
   }
 }
 
-const list = new CircularLinkedList<number>();
+const list = new LinkedList<number>();
 
-list.push(5);
-list.push(6);
-list.push(61);
-list.push(10);
+// list.push(5);
+// list.push(6);
+// list.push(61);
+// list.push(10);
 
-list.deleteKey(10)
-list.deleteKey(61)
+// list.deleteKey(10)
+// list.deleteKey(61)
 
-list.printList();
-list.getNodeCount();
+// list.printList();
+// list.getNodeCount();
