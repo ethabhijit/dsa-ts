@@ -58,8 +58,21 @@ class DoublyLinkedList<T> {
     return;
   }
 
+  deleteNode(key: CombineType<T>): void {
+    if (this.head === null || key === null) return;
+
+    // case 1
+    if (this.head === key) this.head = key.next;
+
+    // case 2
+    if(key.next !== null) key.next.prev = key.prev;
+
+    // case 3
+    if(key.prev !== null) key.prev.next = key.next;
+  }
+
   printList(node: CombineType<T>): void {
-    while(node) {
+    while (node) {
       console.log(node.data);
       node = node.next;
     }
